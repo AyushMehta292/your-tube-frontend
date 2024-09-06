@@ -33,7 +33,7 @@ const LikedVideosList = () => {
     <div className="bg-black min-h-screen p-6">
       <h2 className="text-white text-2xl mb-6">Liked Videos</h2>
       <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-        {likedVideos.map(video => (
+        {Array.isArray(likedVideos) && likedVideos.map(video => (
           <div key={video.likedVideo._id} className="bg-slate-700 p-3 rounded-lg shadow-lg">
             <img 
               src={video.likedVideo.thumbnail} 

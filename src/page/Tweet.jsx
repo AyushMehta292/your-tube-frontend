@@ -142,7 +142,7 @@ const TweetList = () => {
           </button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tweets.map((tweet) => (
+          {Array.isArray(tweets) && tweets.map((tweet) => (
             <div
               key={tweet._id}
               className="bg-white border hover:bg-blue-200 border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-lg transition-shadow duration-200 ease-in-out"
