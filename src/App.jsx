@@ -1,40 +1,61 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Login from './page/Login';
-import SignUp from './page/SignUp';
-import Homepage from './page/Homepage';
-import UserProfile from './page/user';
-import VideoPostForm from './page/upload_video';
-import TweetList from "./page/Tweet"
-import MainHeader from './components/header/mainHeader';
-import VideoList from './page/all_videos';
-import LikedVideosList from './page/Liked_video';
-import VideoPlayer from './page/play_subs_video';
+import "./App.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { getCurrentUser } from "./app/Slices/authSlice";
+import { healthCheck } from "./app/Slices/healthcheck";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
+import thin_loading from "./assets/thin_loading.svg";
 
-const App = () => {
+function App() {
+  const dispatch = useDispatch();
+
+  const [initialLoading, setInitialLoading] = useState(true);
+
+  useEffect(() => {
+    dispatch(healthCheck()).then(() => {
+      dispatch(getCurrentUser()).then(() => {
+        setInitialLoading(false);
+      });
+    });
+    setInterval(() => {
+      dispatch(healthCheck());
+    }, 5 * 60 * 1000);
+  }, []);
+
+  if (initialLoading)
+    return (
+      <div className="h-screen w-full  overflow-y-auto bg-[#121212] text-white">
+        <div className="flex flex-col items-center justify-center mt-64">
+          <img src={thin_loading} className="logo w-24" alt="Loading..." />
+          <h1 className="text-3xl text-center mt-8 font-semibold">Please wait...</h1>
+          <h1 className="text-xl text-center mt-4">Refresh the page if it takes too long</h1>
+        </div>
+      </div>
+    );
+
+  // TODO: Apply Validations and AJAX on all Forms
+
   return (
-
     <>
-    
-    <Router>
-      <Routes>
-      <Route path="/tweet" element={<TweetList />} />
-      <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path ="/homepage" element={ <MainHeader/>} />
-      <Route path="/profile" element={<UserProfile />} />
-      <Route path="/videolist" element={<VideoList />} />
-      <Route path="/likedvideos" element={<LikedVideosList />} />
-      <Route path="/uploadvideo" element={<VideoPostForm />} />
-      
-      </Routes>
-    </Router>
-   
-
-  
+      <Outlet />
+      <div id="popup-models" className="bg-purple-400 relative"></div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition:Bounce
+      />
     </>
   );
-};
+}
 
 export default App;
